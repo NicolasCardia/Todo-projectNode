@@ -1,13 +1,18 @@
+const User = require('../models/usuarioModel');
+
 function userController(app){
-    app.get('/user', (req, res)=> {
-       res.send('Rastreamento da aplicação sendo feito com nodemon')
-     })
+  const usuarioGet = User.get();
+  const usuarioPost = User.post(); 
+
+  app.get('/user', (req, res)=> {
+    console.log('[INFO]: Chgeou um usuario aqui por get')
+    res.send(usuarioGet)
+  });
 
      app.post('/user', (req, res)=> {
-       console.log('[INFO] chegou um usuario aqui')
-       
-       res.send(req.body)
-       //res.send('Rota POST de usuario ativada: usuário adicionado ao banco de dados')
+       console.log('[INFO] chegou um usuario aqui por post')
+       res.send(usuarioPost)
      })
  }
+ 
  module.exports = userController

@@ -1,12 +1,18 @@
-function taskController(app){
-    app.get('/task', (req, res)=> {
-       res.send('Rota ativida com GET e recurso user: Valores de user devem ser retornados')
-     })
-     app.post('/task', (req, res)=> {
-      console.log('[INFO]: chegou uma tarefa')
+const Task = require('../models/tarefaModel'); //requisitando o site
 
-      res.send(req.body)
-      //res.send('Rota POST de usuario ativada: usuario adicionado ao banco de dados')
+function taskController(app) {
+  const taskGet = Task.get(); 
+  const taskPost = Task.post()
+
+  app.get('/tarefa', (req,res) => {
+    console.log('[INFO]: Chegou uma tarefa aqui por GET')
+    res.send(taskGet); //mostrando o conteudo dentro do tarefamodel
+  });
+
+     app.post('/tarefa', (req, res)=> {
+      console.log('[INFO]: chegou uma tarefa aqui por POST')
+      res.send(taskPost); //mostrando o conteudo dentro do tarefa model
     })
   }
+
   module.exports = taskController
