@@ -1,51 +1,55 @@
 const { response } = require('express');
 const UsuariosDao = require('../DAO/usuarios-dao');
 const UserModel = require('../models/usuarioModel');
-const bd = require('../infra/sqlite-db')
+const bd = require('../infra/sqlite-db');
 const DAO = new UsuariosDao(bd)
 
 function userController(app){
   //?  trata possiveis erros que irão aparecer E pega as informações do bando de dados 
-  app.get('/usuarios', (req,res) => {
-    DAO.listaUsuarios()
-    .then((usuarios) => res.send(usuarios))
-    .catch((err) => res.send(err))
+  app.get('/usuarios', async (req,res) => {
+    try {
+      const usuarios = await DAO.listaUsuarios() 
+      res.send(usuarios)
+    } catch (error) {
+      res.status(404).send({mensagem:error})
+    }
   })
 
 
   //? Pega um json que eu faça dentro do insomnia
-  app.post('/usuarios', (req, res)=> {
-    const body = req.body;
-    console.log(body)
-    const user = new UserModel (0, body.nome, body.email, body.senha)
-    console.log(user)
-    DAO.insereUsuario(user)
-    .then((mensagemSucesso) => res.send({mensagem: mensagemSucesso}))
-    .catch((mensagemFalha) => res.send({mensagem: mensagemFalha}))
+  app.post('/usuarios',async (req, res)=> {
+   try{
+      const body = req.body;
+      console.log(body)
+      const user = new UserModel (0, body.nome, body.email, body.senha)
+      const post = await DAO.insereUsuario(user)
+      res.send({mensagem: "usuario inserido com sucesso"})
+    }  catch (error) {
+      res.status(404).send({error:"usuario não cadastrado"})
+    }
+
   });
 
   //? filtra o objeto chamando um email especifico pelo caminho dado
-  app.get('/usuarios/:email', (req, res) => {
-    
-    const email = req.params.email  ;
-    const users = bd.usuarios.find(user => user.email == email) //! error 500 find of undefined
-
-    res.send(users)
+  app.get('/usuarios/:id', async(req, res) => {
+    try {
+      const usuarioParametro = await DAO.filtraUsuario(req.params.id)
+      res.send(usuarioParametro)
+    } catch (error) {
+      res.status(404).send("erro usuario não encontrado")
+    }
   });
 
   //? Deleta um objeto criado no bd(banco de dados) 
-  app.delete('/usuarios/:email', (req,res) => {
-  const email = req.params.email;
-  const users = bd.usuarios
-  
-  for(let i = 0; i < users.length; i++) { //! of undefined
-    if (email === users[i].email) {
-      users.splice(i,1) 
+  app.delete('/usuarios/:email', async (req, res) => {
+    try {
+        const deleta = await DAO.deletaUsuarios(req.params.email)
+        res.send(deleta)
     }
-  }
-  res.send({mensagem: `${email} deletado`}) 
-  
-  });
+    catch(erro){
+        res.send(erro)
+    }
+});
 
   //? Substitui um objeto inteiro pelo parametro passado no JSON
   app.put ('/usuarios/:email', (req,res) => { //
