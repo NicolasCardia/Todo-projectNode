@@ -21,7 +21,7 @@ class tarefasDAO{
     insereTarefa(tarefas) {
         return new Promise((resolve, reject) => {
             this.db.run('INSERT INTO TAREFAS (TITULO, DESCRICAO, STATUS, DATACRIACAO, ID_USUARIO) VALUES (?, ?, ?, ?, ?)'
-            , [tarefas.titulo, tarefas.descricao, tarefas.status, tarefas.dataCriacao, tarefas.idUser]
+            , [tarefas.titulo, tarefas.descricao, tarefas.status, tarefas.dataDeCriacao, tarefas.idUser]
             , (err) => {
                 if(err) {
                     reject('tarefa não pode ser inserido!')
@@ -55,6 +55,18 @@ class tarefasDAO{
             })
         })
     }
+
+    updateTarefa(tarefas,id) {
+        return new Promise((resolve,reject) => {
+            this.db.run("UPDATE TAREFAS SET TITULO = ?, DESCRICAO = ?, STATUS = ?, DATACRIACAO = ?, ID_USUARIO = ? WHERE ID = ?", [tarefas.titulo, tarefas.descricao, tarefas.status, tarefas.dataDeCriacao, tarefas.idUser, id],(err) =>{
+                if (err){
+                    reject(err)
+                } else {
+                    resolve("Tarefa atualizada com sucesso")
+                }
+            })
+        })
+    };
 }
 
 module.exports = tarefasDAO

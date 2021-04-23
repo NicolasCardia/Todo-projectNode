@@ -58,12 +58,11 @@ function userController(app){
 });
 
   //? Substitui um objeto inteiro pelo parametro passado no JSON
-  //! só retorna resultado null
   app.put ('/usuarios/:id', async (req,res) => { 
     const body = req.body;
     const id = req.params.id;
-    let user = new UsuariosDao(0, body.nome, body.email, body.senha);
-
+    let user = new UserModel(0, body.nome, body.email, body.senha);
+    console.log(body)
     try {
       await DAO.updateUser(user,id); 
       res.send("Usuario atualizado!") 

@@ -19,14 +19,14 @@ const DAO = new tarefasDAO(bd)
     //! dataDeCriacao não esta inserindo resultado
   app.post('/tarefas',async (req, res)=> {
     const body = req.body;
-    const tarefa = new tarefasModel(0, body.titulo, body.descricao, body.status, body.dataCriacao, body.idUsuario)
+    const tarefa = new tarefasModel(0, body.titulo, body.descricao, body.status, body.dataDeCriacao, body.idUsuario)
+    console.log(body.dataDeCriacao)
     
     try{
-       console.log(dataDeCriacao)
        await DAO.insereTarefa(tarefa)  
        res.send({mensagem: "tarefa inserida com sucesso!"})
      }  catch (error) {
-       res.status(404).send({error:"tarefa não cadastrada!"}) //! agr não ta mais funcionando 
+       res.status(404).send({error:"tarefa não cadastrada!"}) 
      }
  
   });
@@ -60,17 +60,18 @@ const DAO = new tarefasDAO(bd)
 
 
   //? Substitui um objeto inteiro pelo parametro passado no JSON
-  //Todo: falta atualizar
-  app.put ('/usuarios/:email', (req,res) => { //
-    const email = req.params.email;
-    bd.usuarios.forEach((usuarios) => {  //! forEach of undefined
-      if(email == usuarios.email){
-        usuarios.nome = req.body.nome;
-        usuarios.password = req.body.password;
-        res.send({mensagem: `${email} Usuario alterado com sucesso`})
-      }
-    })
-  })
+  app.put ('/tarefas/:id', async (req,res) => { 
+    const body = req.body;
+    const id = req.params.id;
+    let TAREFA = new tarefasModel(0, body.titulo, body.descricao, body.status, body.dataDeCriacao, body.idUsuario);
+    console.log(id)
+    try {
+      await DAO.updateTarefa(TAREFA,id); 
+      res.send("Usuario atualizado!") 
+    } catch (error) {
+      res.status(404).send("usuario não encontrado!")
+    }
+  });
 
 }
 
