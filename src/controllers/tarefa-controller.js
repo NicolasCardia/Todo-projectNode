@@ -16,7 +16,6 @@ const DAO = new tarefasDAO(bd)
   });
 
     //? cria uma nova tarefa (titulo,descrição,status,dataCriacao,idUsuario)
-    //! dataDeCriacao não esta inserindo resultado
   app.post('/tarefas',async (req, res)=> {
     const body = req.body;
     const tarefa = new tarefasModel(0, body.titulo, body.descricao, body.status, body.dataDeCriacao, body.idUsuario)

@@ -1,5 +1,3 @@
-const tarefas = require("../models/tarefaModel")
-
 class tarefasDAO{
     constructor(db){
         this.db = db
