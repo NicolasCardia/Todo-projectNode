@@ -1,10 +1,10 @@
-const { response } = require('express');
 const UsuariosDao = require('../DAO/usuarios-dao');
 const UserModel = require('../models/usuarioModel');
 const bd = require('../infra/sqlite-db');
-const DAO = new UsuariosDao(bd)
 
 function userController(app){
+  const DAO = new UsuariosDao(bd)
+
   //?  trata possiveis erros que irão aparecer E pega as informações do bando de dados 
   app.get('/usuarios', async (req,res) => {
     try {
@@ -18,11 +18,12 @@ function userController(app){
 
   //? Pega um json que eu faça dentro do insomnia
   app.post('/usuarios',async (req, res)=> {
-   try{
-      const body = req.body;
-      console.log(body)
-      const user = new UserModel (0, body.nome, body.email, body.senha)
-      const post = await DAO.insereUsuario(user)
+    const body = req.body;
+    console.log(body)
+    const user = new UserModel (0, body.nome, body.email, body.senha)
+   
+    try{
+      await DAO.insereUsuario(user)
       res.send({mensagem: "usuario inserido com sucesso"})
     }  catch (error) {
       res.status(404).send({error:"usuario não cadastrado"})
@@ -30,20 +31,25 @@ function userController(app){
 
   });
 
-  //? filtra o objeto chamando um email especifico pelo caminho dado
-  app.get('/usuarios/:id', async(req, res) => {
-    try {
-      const usuarioParametro = await DAO.filtraUsuario(req.params.id)
-      res.send(usuarioParametro)
-    } catch (error) {
-      res.status(404).send("erro usuario não encontrado")
-    }
-  });
 
-  //? Deleta um objeto criado no bd(banco de dados) 
-  app.delete('/usuarios/:email', async (req, res) => {
+  //? filtra o objeto chamando um id especifico pelo caminho dado
+  app.get('/usuarios/:id', async (req, res) => {
+    const id = req.params.id
+    
+    try{
+        const usuario = await DAO.buscaUser(id)
+        res.send(usuario)
+    }
+    catch(erro){
+        res.send(erro)
+    }
+});
+
+
+  //? Deleta um objeto criado no bd(banco de dados) pelo ID 
+  app.delete('/usuarios/:id', async (req, res) => {
     try {
-        const deleta = await DAO.deletaUsuarios(req.params.email)
+        const deleta = await DAO.deletaUsuarios(req.params.id)
         res.send(deleta)
     }
     catch(erro){
@@ -52,19 +58,21 @@ function userController(app){
 });
 
   //? Substitui um objeto inteiro pelo parametro passado no JSON
-  app.put ('/usuarios/:email', (req,res) => { //
-    const email = req.params.email;
-    bd.usuarios.forEach((usuarios) => {  //! forEach of undefined
-      if(email == usuarios.email){
-        usuarios.nome = req.body.nome;
-        usuarios.password = req.body.password;
-        res.send({mensagem: `${email} Usuario alterado com sucesso`})
-      }
+  //! só retorna resultado null
+  app.put ('/usuarios/:id', async (req,res) => { 
+    const body = req.body;
+    const id = req.params.id;
+    let user = new UsuariosDao(0, body.nome, body.email, body.senha);
 
-    })
-
-  })
-
+    try {
+      await DAO.updateUser(user,id); 
+      res.send("Usuario atualizado!") 
+    } catch (error) {
+      res.status(404).send("usuario não encontrado!")
+    }
+  });
+  
+  
 }
   
  module.exports = userController;

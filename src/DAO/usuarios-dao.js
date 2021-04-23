@@ -34,39 +34,43 @@ class UsuariosDao  {
         })
     }
 
-    filtraUsuario(buscar) {
-        return new promise ((resolve,reject) => {
-            this.db.all('SELECT * FROM USUARIOS WHERE ID = ?', buscar, (error,results) => {
-                if(error) {
-                    reject ("Erro ao buscar o usuários informado, certifique-se que o id informado exista");
-                } else {
-                    resolve ({mensagem: "usuário encontrado com sucesso"})
-                }
-            })
 
+    buscaUser(id) {
+        return new Promise((resolve, reject) => {
+            this.db.get("SELECT * FROM USUARIOS WHERE ID = ?", id, (err, user) => {
+                if (err) {
+                    reject("Erro encontrado na tentativa de consultar o id do usuário");
+                } else {
+                    resolve(user);
+                } 
+            })
         })
     }
 
     deletaUsuarios(deletar) {
         return new Promise((resolve, reject) => {
-            this.db.run("DELETE FROM USUARIOS WHERE EMAIL = ?", deletar, (error) => {
-                if (error) reject("Erro encontrado na tentativa de deletar usuario");
-                else resolve("Tentativa de deletar dados bem sucedida!");
-            })
-        })
-    }   
-        
-       
-        /*return new promise ((resolve,reject) => {
-            this.db.run('DELETE FROM USUARIOS WHERE ID = ?', deleta, (error) => {
+            this.db.run("DELETE FROM USUARIOS WHERE ID = ?", deletar, (error) => {
                 if (error) {
-                    reject("[ERROR]")
-                } else {
-                    resolve("Usuario deletado com sucesso!")
-                }   
+                    reject("Erro encontrado na tentativa de deletar usuario");    
+                } else {  
+                    resolve("Tentativa de deletar dados bem sucedida!");
+                } 
             })
         })
-    }*/
+    }
+    
+    updateUser(usuario,id) {
+        return new Promise((resolve,reject) => {
+            this.db.run("UPDATE USUARIOS SET NOME = ?, EMAIL = ?, SENHA = ? WHERE ID = ?", [usuario.nome, usuario.email, usuario.senha, id],(err) =>{
+                if (err){
+                    reject(err)
+                } else {
+                    resolve("usuario atualizado com sucesso")
+                }
+            })
+        })
+    }
+        
 }
 
 module.exports = UsuariosDao;

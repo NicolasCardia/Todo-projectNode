@@ -1,22 +1,12 @@
-let taskGet = {
-    tarefa: "limpar a casa",
-    prazo: "hoje",
-    importancia: "média",
-    verbo: "GET"
+class tarefas {
+    constructor (id,titulo, descricao, status, dataDeCriacao, idUser) {
+        this.id = id,
+        this.titulo = titulo,
+        this.descricao = descricao,
+        this.status = status,
+        this.dataCriacao = dataDeCriacao,
+        this.idUser = idUser
+    }
 }
 
-  let taskPost = {
-    tarefa: "limpar a casa",
-    prazo: "hoje",
-    importancia: "média",
-    verbo: "POST"
-}
-
-    module.exports = {
-      get(){
-          return taskGet; //retorna requisição com GET
-      }, 
-      post(){
-          return taskPost; //retorna requisição com POST
-      }
-  }
+module.exports = tarefas
