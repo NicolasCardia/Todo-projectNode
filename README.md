@@ -222,7 +222,7 @@ POST: http://localhost:3000/tarefas
 ```
 
 
-This template was inspired from [Bgstatic](https://github.com/Vitor-Vaz)'s template.
+This template was inspired from [Vitor Vaz](https://github.com/Vitor-Vaz)'s template.
 
 
 
